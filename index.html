@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RadShield Network – Kiểm định X-quang, CT & thiết bị y tế</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <meta name="description" content="Kiểm định X-quang, CT và thiết bị y tế thuộc phạm vi Thông tư 05/2022/TT-BYT cho bệnh viện, trung tâm y tế, phòng khám. Tư vấn phòng chì, hồ sơ cấp phép bức xạ. Đăng ký sớm nhận ưu đãi 20%." />
+
+  <!-- Font Inter tu Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS qua CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Cấu hình Tailwind: thêm bảng màu xanh y tế và font Inter
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            medical: {
+              dark: '#0A6EBD',   // xanh đậm – màu chủ đạo
+              DEFAULT: '#0D8BF2',// xanh sáng – điểm nhấn
+              light: '#E6F4FF',  // xanh nhạt – nền
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          boxShadow: {
+            soft: '0 10px 30px -12px rgba(10, 110, 189, 0.25)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Hiệu ứng fade-in khi cuộn: phần tử bắt đầu ẩn, JS thêm class .is-visible khi lọt vào màn hình */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease-out, transform .7s ease-out;
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+    /* Tôn trọng người dùng tắt animation trong hệ điều hành */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      html { scroll-behavior: auto; }
+    }
+    /* Bù chiều cao header sticky khi nhảy tới anchor */
+    section[id] { scroll-margin-top: 116px; }
+  </style>
+</head>
+
+<body class="font-sans text-slate-700 bg-white antialiased">
+
+  <!-- ===================== 1. HEADER (sticky) ===================== -->
+  <header id="header" class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-transparent transition-all duration-300">
+    <!-- Thanh slogan công ty phía trên header -->
+    <div class="bg-gradient-to-r from-medical-dark via-medical to-medical-dark text-white">
+      <p class="max-w-7xl mx-auto px-4 h-9 flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.25em]">
+        <span>Tin cậy</span>
+        <span class="h-1.5 w-1.5 rounded-full bg-white/70" aria-hidden="true"></span>
+        <span>An toàn</span>
+        <span class="h-1.5 w-1.5 rounded-full bg-white/70" aria-hidden="true"></span>
+        <span>Chuẩn mực</span>
+      </p>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo: biểu tượng khiên RSN (assets/logo-shield.png) + tên thương hiệu -->
+        <a href="#top" class="flex items-center gap-2.5 shrink-0" aria-label="RadShield Network – Trang chủ">
+          <img src="assets/logo-shield.png" alt="Logo RSN" class="h-11 md:h-12 w-auto" width="317" height="400" />
+          <span class="leading-tight">
+            <span class="block text-lg md:text-xl font-extrabold tracking-tight text-medical-dark">RadShield</span>
+            <span class="block text-[10px] md:text-xs font-semibold uppercase tracking-[0.25em] text-medical">Network</span>
+          </span>
+        </a>
+
+        <!-- Menu desktop -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium" aria-label="Menu chính">
+          <a href="#giai-phap" class="hover:text-medical-dark transition-colors">Giải pháp</a>
+          <a href="#cam-ket" class="hover:text-medical-dark transition-colors">Cam kết</a>
+          <a href="#dang-ky" class="hover:text-medical-dark transition-colors">Đăng ký ưu đãi</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <!-- CTA nhỏ -->
+          <a href="#dang-ky"
+             class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-medical-dark px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-medical transition-colors">
+            Nhận ưu đãi 20%
+          </a>
+          <!-- Nút mở menu mobile -->
+          <button id="menu-toggle" type="button"
+                  class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg text-slate-600 hover:bg-medical-light"
+                  aria-controls="mobile-menu" aria-expanded="false" aria-label="Mở menu">
+            <svg id="icon-open" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu mobile (ẩn mặc định) -->
+    <nav id="mobile-menu" class="md:hidden hidden border-t border-slate-100 bg-white" aria-label="Menu mobile">
+      <div class="px-4 py-3 space-y-1 text-base font-medium">
+        <a href="#giai-phap" class="mobile-link block rounded-lg px-3 py-2.5 hover:bg-medical-light">Giải pháp</a>
+        <a href="#cam-ket" class="mobile-link block rounded-lg px-3 py-2.5 hover:bg-medical-light">Cam kết</a>
+        <a href="#dang-ky" class="mobile-link block rounded-lg px-3 py-2.5 hover:bg-medical-light">Đăng ký ưu đãi</a>
+        <a href="#dang-ky" class="mobile-link block text-center rounded-full bg-medical-dark px-4 py-3 mt-2 font-semibold text-white">Nhận ưu đãi 20%</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- ===================== 2. HERO ===================== -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-medical-light via-white to-sky-50">
+      <!-- Các vòng tròn trang trí phía sau -->
+      <div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 md:w-[28rem] md:h-[28rem] rounded-full bg-medical/10 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-32 -left-20 w-72 h-72 rounded-full bg-medical-dark/10 blur-3xl"></div>
+
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28 grid lg:grid-cols-2 gap-12 items-center">
+        <div class="reveal text-center lg:text-left">
+          <!-- Badge -->
+          <span class="inline-flex items-center gap-2 rounded-full bg-white border border-medical/20 px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-medical-dark shadow-sm">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="absolute inline-flex h-full w-full rounded-full bg-medical opacity-75 animate-ping"></span>
+              <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-medical"></span>
+            </span>
+            Pre-launch
+          </span>
+
+          <h1 class="mt-6 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight text-slate-900">
+            Giải pháp toàn diện cho
+            <span class="text-medical-dark">mọi cơ sở y tế</span>
+            <span class="block mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-700">Từ setup đến vận hành an toàn</span>
+          </h1>
+
+          <p class="mt-6 text-base sm:text-lg text-slate-600 max-w-xl mx-auto lg:mx-0">
+            Chào đón sự kiện ra mắt – Đăng ký sớm nhận ngay
+            <strong class="text-medical-dark">ưu đãi 20%</strong> gói kiểm định đầu tiên.
+          </p>
+
+          <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+            <a href="#dang-ky"
+               class="inline-flex items-center justify-center gap-2 rounded-full bg-medical-dark px-7 py-4 text-base font-semibold text-white shadow-soft hover:bg-medical hover:-translate-y-0.5 transition-all">
+              Đăng ký nhận ưu đãi khai trương
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#giai-phap"
+               class="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-7 py-4 text-base font-semibold text-slate-700 hover:border-medical hover:text-medical-dark transition-colors">
+              Xem giải pháp
+            </a>
+          </div>
+
+          <!-- Đối tượng khách hàng -->
+          <p class="mt-6 text-sm text-slate-500">
+            Dành cho bệnh viện, trung tâm y tế, phòng khám và mọi cơ sở có sử dụng X-quang, CT
+            hoặc thiết bị y tế thuộc phạm vi <span class="font-semibold text-slate-700">Thông tư 05/2022/TT-BYT</span>.
+          </p>
+        </div>
+
+        <!-- Khối minh họa bên phải -->
+        <div class="reveal hidden sm:block">
+          <div class="relative mx-auto max-w-md">
+            <div class="rounded-3xl bg-white p-6 shadow-soft border border-slate-100">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-semibold text-slate-500">Gói kiểm định đầu tiên</p>
+                <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600">-20%</span>
+              </div>
+              <ul class="mt-5 space-y-4">
+                <li class="flex items-center gap-3">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-medical-light text-medical-dark">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4Z"/></svg>
+                  </span>
+                  <div><p class="font-semibold text-slate-800">Phòng chì đạt chuẩn</p><p class="text-xs text-slate-500">Tư vấn thiết kế & tính toán che chắn</p></div>
+                </li>
+                <li class="flex items-center gap-3">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-medical-light text-medical-dark">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M9 16h6M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
+                  </span>
+                  <div><p class="font-semibold text-slate-800">Hồ sơ cấp phép bức xạ</p><p class="text-xs text-slate-500">Hỗ trợ trọn gói thủ tục</p></div>
+                </li>
+                <li class="flex items-center gap-3">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-medical-light text-medical-dark">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h4l2-5 4 10 2-5h6"/></svg>
+                  </span>
+                  <div><p class="font-semibold text-slate-800">Kiểm định thiết bị</p><p class="text-xs text-slate-500">X-quang, CT, máy thở, phá rung tim…</p></div>
+                </li>
+              </ul>
+            </div>
+            <!-- Thẻ nổi nhỏ -->
+            <div class="absolute -bottom-6 -left-6 rounded-2xl bg-medical-dark px-5 py-4 text-white shadow-soft">
+              <p class="text-2xl font-extrabold">10+</p>
+              <p class="text-xs text-white/80">Dịch vụ chuyên sâu</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 3. GIẢI PHÁP ===================== -->
+    <section id="giai-phap" class="py-16 md:py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="reveal max-w-3xl mx-auto text-center">
+          <p class="text-sm font-bold uppercase tracking-widest text-medical">Giải pháp cho mọi cơ sở y tế</p>
+          <h2 class="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
+            Chúng tôi không chỉ kiểm định – Chúng tôi đồng hành cùng cơ sở của bạn từ setup đến vận hành
+          </h2>
+          <p class="mt-4 text-slate-600">
+            Từ tư vấn phòng chì, hồ sơ cấp phép cho cơ sở mới, đến kiểm định lần đầu, định kỳ và sau sửa chữa
+            cho X-quang, CT cùng 6 nhóm thiết bị y tế thuộc phạm vi Thông tư 05/2022/TT-BYT.
+          </p>
+        </div>
+
+        <!-- Đối tượng khách hàng: sửa danh sách trong mảng AUDIENCES ở JS bên dưới -->
+        <ul id="audience-list" class="reveal mt-8 flex flex-wrap justify-center gap-2"></ul>
+
+        <!-- Lưới card dịch vụ: được render từ mảng SERVICES trong JS bên dưới để dễ thêm/sửa -->
+        <div id="services-grid" class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
+      </div>
+    </section>
+
+    <!-- ===================== 4. CAM KẾT ===================== -->
+    <section id="cam-ket" class="py-16 md:py-24 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-5 gap-12 items-center">
+        <div class="reveal lg:col-span-2">
+          <p class="text-sm font-bold uppercase tracking-widest text-medical">Vì sao chọn chúng tôi</p>
+          <h2 class="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
+            Cam kết chất lượng &amp; uy tín
+          </h2>
+          <p class="mt-5 text-slate-600 leading-relaxed">
+            RadShield Network quy tụ đội ngũ chuyên gia, kỹ sư, kiểm định viên giàu kinh nghiệm trong lĩnh vực an toàn bức xạ
+            và thiết bị y tế, tốt nghiệp từ các trường đại học uy tín trong và ngoài nước. Hệ thống thiết bị đo kiểm hiện đại
+            của chúng tôi đang được hoàn thiện theo tiêu chuẩn của
+            <strong class="text-slate-800">Bộ Y tế</strong> và <strong class="text-slate-800">Bộ Khoa học &amp; Công nghệ</strong>,
+            sẵn sàng đồng hành cùng cơ sở y tế của bạn – từ ngày đầu setup đến suốt quá trình vận hành.
+          </p>
+
+          <!-- Các trường đào tạo đội ngũ nhân sự -->
+          <p class="mt-6 text-xs font-bold uppercase tracking-widest text-slate-500">Nhân sự được đào tạo tại</p>
+          <ul class="mt-3 space-y-2.5">
+            <li class="flex items-start gap-3 text-sm text-slate-700">
+              <svg class="mt-0.5 w-5 h-5 shrink-0 text-medical-dark" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4 2 9l10 5 10-5-10-5ZM6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg>
+              <span><strong class="font-semibold text-slate-900">Trường Đại học Nghiên cứu Hạt nhân Quốc gia (MEPhI)</strong> – Liên bang Nga</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-700">
+              <svg class="mt-0.5 w-5 h-5 shrink-0 text-medical-dark" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4 2 9l10 5 10-5-10-5ZM6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg>
+              <span><strong class="font-semibold text-slate-900">Trường Đại học Khoa học Tự nhiên</strong> – Đại học Quốc gia Hà Nội</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm text-slate-700">
+              <svg class="mt-0.5 w-5 h-5 shrink-0 text-medical-dark" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4 2 9l10 5 10-5-10-5ZM6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5M22 9v6"/></svg>
+              <span><strong class="font-semibold text-slate-900">Đại học Bách khoa Hà Nội</strong></span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="lg:col-span-3 grid gap-5 sm:grid-cols-3">
+          <!-- Điểm nổi bật 1 -->
+          <div class="reveal rounded-2xl bg-white p-6 border border-slate-100 shadow-sm hover:shadow-soft transition-shadow">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-medical-dark text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM21 20v-1a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <h3 class="mt-4 font-bold text-slate-900">Đội ngũ kỹ sư, kiểm định viên giàu kinh nghiệm</h3>
+          </div>
+          <!-- Điểm nổi bật 2 -->
+          <div class="reveal rounded-2xl bg-white p-6 border border-slate-100 shadow-sm hover:shadow-soft transition-shadow">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-medical-dark text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v3M12 18v3M3 12h3M18 12h3M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></svg>
+            </span>
+            <h3 class="mt-4 font-bold text-slate-900">Thiết bị đo kiểm hiện đại theo tiêu chuẩn Bộ Y tế</h3>
+          </div>
+          <!-- Điểm nổi bật 3 -->
+          <div class="reveal rounded-2xl bg-white p-6 border border-slate-100 shadow-sm hover:shadow-soft transition-shadow">
+            <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-medical-dark text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9 2 2 4-4"/></svg>
+            </span>
+            <h3 class="mt-4 font-bold text-slate-900">Quy trình kiểm định minh bạch, chính xác</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 5. FORM THU THẬP LEAD ===================== -->
+    <section id="dang-ky" class="py-16 md:py-24 bg-gradient-to-br from-medical-dark to-medical">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 items-start">
+        <div class="reveal text-white text-center lg:text-left lg:sticky lg:top-40 lg:pt-8">
+          <span class="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider">Số lượng ưu đãi có hạn</span>
+          <h2 class="mt-4 text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-tight">
+            Đăng ký giữ chỗ nhận ưu đãi 20% hoặc tư vấn kiểm định &amp; thủ tục cấp phép bức xạ
+          </h2>
+          <p class="mt-4 text-white/85">Chuyên viên của chúng tôi sẽ liên hệ lại với bạn trong thời gian sớm nhất.</p>
+        </div>
+
+        <div class="reveal">
+          <form id="lead-form" class="rounded-3xl bg-white p-6 sm:p-8 shadow-2xl space-y-5" novalidate>
+            <!-- Tên đơn vị -->
+            <div>
+              <label for="org" class="block text-sm font-semibold text-slate-800">Tên đơn vị <span class="text-red-500">*</span></label>
+              <input id="org" name="org" type="text" required autocomplete="organization"
+                     placeholder="VD: Bệnh viện Đa khoa An Tâm"
+                     class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-medical focus:ring-4 focus:ring-medical/15 outline-none transition" />
+              <p class="error-msg hidden mt-1 text-sm text-red-500">Vui lòng nhập tên đơn vị.</p>
+            </div>
+
+            <!-- Loại hình cơ sở -->
+            <div>
+              <label for="facilityType" class="block text-sm font-semibold text-slate-800">Loại hình</label>
+              <select id="facilityType" name="facilityType"
+                      class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:border-medical focus:ring-4 focus:ring-medical/15 outline-none transition">
+                <option value="">-- Chọn loại hình --</option>
+                <option value="bv-cong-lap">Bệnh viện công lập</option>
+                <option value="bv-tu-nhan">Bệnh viện tư nhân</option>
+                <option value="trung-tam-y-te">Trung tâm y tế</option>
+                <option value="phong-kham">Phòng khám</option>
+                <option value="khac">Khác</option>
+              </select>
+            </div>
+
+            <!-- Địa chỉ -->
+            <div>
+              <label for="address" class="block text-sm font-semibold text-slate-800">Địa chỉ</label>
+              <input id="address" name="address" type="text" autocomplete="street-address"
+                     placeholder="Số nhà, đường, xã/phường, tỉnh/thành phố"
+                     class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-medical focus:ring-4 focus:ring-medical/15 outline-none transition" />
+            </div>
+
+            <!-- Người liên hệ -->
+            <div>
+              <label for="contact" class="block text-sm font-semibold text-slate-800">Người liên hệ <span class="text-red-500">*</span></label>
+              <input id="contact" name="contact" type="text" required autocomplete="name"
+                     placeholder="Họ và tên"
+                     class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-medical focus:ring-4 focus:ring-medical/15 outline-none transition" />
+              <p class="error-msg hidden mt-1 text-sm text-red-500">Vui lòng nhập tên người liên hệ.</p>
+            </div>
+
+            <!-- Số điện thoại -->
+            <div>
+              <label for="phone" class="block text-sm font-semibold text-slate-800">Số điện thoại <span class="text-red-500">*</span></label>
+              <input id="phone" name="phone" type="tel" required autocomplete="tel" inputmode="tel"
+                     placeholder="VD: 0912 345 678"
+                     class="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:border-medical focus:ring-4 focus:ring-medical/15 outline-none transition" />
+              <p class="error-msg hidden mt-1 text-sm text-red-500">Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0).</p>
+            </div>
+
+            <!-- Tình trạng cơ sở -->
+            <div>
+              <label for="status" class="block text-sm font-semibold text-slate-800">Tình trạng cơ sở</label>
+              <select id="status" name="status"
+                      class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:border-medical focus:ring-4 focus:ring-medical/15 outline-none transition">
+                <option value="da-hoat-dong">Đang hoạt động</option>
+                <option value="mo-rong">Đang mở rộng / bổ sung thiết bị</option>
+                <option value="dang-setup">Đang setup (chuẩn bị đi vào hoạt động)</option>
+              </select>
+            </div>
+
+            <!-- Khai báo số lượng trang thiết bị (theo Phiếu khảo sát trang thiết bị y tế) – không bắt buộc, mặc định thu gọn -->
+            <details id="equipment-box" class="group rounded-2xl border border-slate-200 bg-slate-50/60 open:bg-white open:border-medical/30 transition-colors">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 [&::-webkit-details-marker]:hidden">
+                <span>
+                  <span class="block text-sm font-semibold text-slate-800">Khai báo số lượng trang thiết bị</span>
+                  <span id="equipment-summary" class="block text-xs text-slate-500">Không bắt buộc · giúp chúng tôi báo giá chính xác hơn</span>
+                </span>
+                <svg class="w-5 h-5 shrink-0 text-medical-dark transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+              </summary>
+
+              <div class="px-4 pb-4">
+                <!-- Tiêu đề cột (tên thiết bị nằm riêng 1 dòng phía trên các ô nhập) -->
+                <div class="grid grid-cols-[4rem_4rem_1fr] sm:grid-cols-[5rem_5rem_1fr] items-end gap-2 border-b border-slate-200 pb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  <span class="text-center leading-tight">Hiện có</span>
+                  <span class="text-center leading-tight">Dự kiến mua</span>
+                  <span class="text-center leading-tight">Nhu cầu kiểm định</span>
+                </div>
+                <!-- Các dòng thiết bị: render từ mảng EQUIPMENT trong JS bên dưới -->
+                <div id="equipment-list"></div>
+                <p class="mt-3 text-xs leading-relaxed text-slate-500">
+                  Để trống hoặc ghi 0 nếu không có thiết bị. Nhu cầu kiểm định (tích được nhiều lựa chọn): <strong class="font-semibold">Lần đầu</strong> (máy mới lắp đặt),
+                  <strong class="font-semibold">Định kỳ</strong> (đến hạn kiểm định lại) hoặc <strong class="font-semibold">Sau sửa chữa lớn</strong>.
+                </p>
+              </div>
+            </details>
+
+            <!-- Bẫy chống spam (honeypot): ẩn với người dùng, bot tự điền sẽ bị bỏ qua -->
+            <div class="hidden" aria-hidden="true">
+              <label for="website">Website</label>
+              <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <!-- Thông báo lỗi khi gửi không thành công -->
+            <p id="form-error" role="alert" class="hidden rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+              Gửi đăng ký chưa thành công. Vui lòng thử lại hoặc gọi hotline
+              <a href="tel:0969993721" class="font-semibold underline">0969 993 721</a>.
+            </p>
+
+            <button type="submit" id="submit-btn"
+                    class="w-full inline-flex items-center justify-center gap-2 rounded-full bg-medical-dark px-6 py-4 text-base font-semibold text-white shadow-soft hover:bg-medical transition-colors disabled:opacity-60">
+              Gửi đăng ký ngay
+            </button>
+
+            <p class="flex items-center justify-center gap-1.5 text-xs text-slate-500">
+              <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2Zm10-10V7a4 4 0 0 0-8 0v4h8Z"/></svg>
+              Thông tin của bạn được bảo mật tuyệt đối
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== 6. FOOTER ===================== -->
+  <footer class="bg-slate-900 text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid gap-10 md:grid-cols-3">
+      <div>
+        <!-- Logo khiên RSN, đặt trên nền trắng để giữ đúng màu gốc -->
+        <div class="flex items-center gap-4">
+          <span class="inline-flex rounded-2xl bg-white p-2.5">
+            <img src="assets/logo-shield.png" alt="Logo RSN" class="h-16 w-auto" width="317" height="400" loading="lazy" />
+          </span>
+          <div>
+            <p class="text-lg font-extrabold text-white">RadShield <span class="text-medical">Network</span></p>
+            <p class="text-xs font-semibold tracking-wide text-slate-300">Reliability – Safety – Norms</p>
+          </div>
+        </div>
+        <p class="mt-4 text-sm leading-relaxed">Đồng hành cùng các cơ sở y tế từ setup đến vận hành an toàn.</p>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-wider text-white">Văn phòng</h4>
+        <p class="mt-4 text-sm leading-relaxed">26/8B Cù Chính Lan, phường Hồng Bàng, thành phố Hải Phòng</p>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold uppercase tracking-wider text-white">Liên hệ</h4>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li>Email: <a href="mailto:contact@rsn.vn" class="hover:text-white">contact@rsn.vn</a></li>
+          <li>Hotline: <a href="tel:0969993721" class="hover:text-white">0969 993 721</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-slate-800">
+      <p class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-xs text-center md:text-left">
+        Copyright © 2026 RadShield Network LLP – Sắp ra mắt
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast thông báo sau khi gửi form -->
+  <div id="toast" role="status" aria-live="polite"
+       class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] w-[calc(100%-2rem)] max-w-md rounded-2xl bg-white p-4 shadow-2xl border border-emerald-100 flex items-start gap-3 opacity-0 pointer-events-none translate-y-4 transition-all duration-300">
+    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
+    </span>
+    <div>
+      <p class="font-semibold text-slate-900">Đăng ký thành công!</p>
+      <p class="text-sm text-slate-600">Cảm ơn bạn. Chúng tôi sẽ liên hệ lại trong thời gian sớm nhất.</p>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       DỮ LIỆU DỊCH VỤ – sửa/thêm/bớt tại đây, giao diện tự cập nhật
+       icon: tên khóa trong object ICONS bên dưới
+       comingSoon: true => hiện nhãn "Sắp ra mắt"
+       ========================================================= */
+    const SERVICES = [
+      { title: 'Tư vấn thiết kế phòng chì đạt chuẩn', desc: 'Tính toán che chắn, bố trí mặt bằng phòng X-quang/CT đúng quy chuẩn an toàn bức xạ.', icon: 'shield' },
+      { title: 'Hỗ trợ hồ sơ xin cấp phép tiến hành công việc bức xạ', desc: 'Chuẩn bị, hoàn thiện hồ sơ và đồng hành trong suốt quá trình xin giấy phép.', icon: 'document' },
+      { title: 'Kiểm định máy X-quang', desc: 'Đánh giá các thông số kỹ thuật, an toàn và chất lượng hình ảnh.', icon: 'xray' },
+      { title: 'Kiểm định máy CT', desc: 'Kiểm tra liều chiếu, độ chính xác và chất lượng hình ảnh cắt lớp.', icon: 'ct' },
+      { title: 'Kiểm xạ', desc: 'Đo suất liều bức xạ tại phòng chụp, khu vực làm việc và khu vực công cộng, đánh giá hiệu quả che chắn.', icon: 'meter' },
+      { title: 'Kiểm định máy thở, máy gây mê kèm thở', desc: 'Đảm bảo thông số thông khí, áp lực và cảnh báo hoạt động chính xác.', icon: 'lungs', tag: 'TT 05/2022/TT-BYT' },
+      { title: 'Kiểm định dao mổ điện', desc: 'Đo công suất đầu ra, dòng rò và an toàn điện cho người bệnh.', icon: 'bolt', tag: 'TT 05/2022/TT-BYT' },
+      { title: 'Kiểm định máy phá rung tim', desc: 'Kiểm tra năng lượng phóng, thời gian nạp và độ tin cậy khi cấp cứu.', icon: 'heart', tag: 'TT 05/2022/TT-BYT' },
+      { title: 'Kiểm định máy thận nhân tạo', desc: 'Đánh giá lưu lượng, nhiệt độ, độ dẫn và các hệ thống báo động.', icon: 'drop', tag: 'TT 05/2022/TT-BYT' },
+      { title: 'Kiểm định lồng ấp trẻ sơ sinh', desc: 'Kiểm tra nhiệt độ, độ ẩm, nồng độ O₂ và an toàn cho trẻ.', icon: 'baby', tag: 'TT 05/2022/TT-BYT' },
+    ];
+
+    // Đối tượng khách hàng – hiển thị dạng nhãn dưới tiêu đề khối Giải pháp
+    const AUDIENCES = [
+      'Bệnh viện công lập & tư nhân',
+      'Trung tâm y tế',
+      'Phòng khám đa khoa & chuyên khoa',
+      'Cơ sở chẩn đoán hình ảnh',
+      'Cơ sở mới đang setup',
+    ];
+    document.getElementById('audience-list').innerHTML = AUDIENCES.map((a) => `
+      <li class="inline-flex items-center gap-1.5 rounded-full border border-medical/20 bg-medical-light px-3.5 py-1.5 text-sm font-medium text-medical-dark">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>
+        ${a}
+      </li>`).join('');
+
+    // Bộ icon SVG dạng nét (stroke) – dùng chung cho các card
+    const ICONS = {
+      shield:   '<path d="M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4Z"/><path d="M9 12l2 2 4-4"/>',
+      document: '<path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+      xray:     '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 7v10M9 9h6M9 12h6M9 15h6"/>',
+      ct:       '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M4 20h16"/>',
+      lungs:    '<path d="M12 4v8M12 12c-1.5 1-3 1-3 1M12 12c1.5 1 3 1 3 1"/><path d="M8 7c-3 1-5 5-5 10 0 2 1 3 3 3s3-1 3-3V9a2 2 0 0 0-1-2ZM16 7c3 1 5 5 5 10 0 2-1 3-3 3s-3-1-3-3V9a2 2 0 0 1 1-2Z"/>',
+      bolt:     '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>',
+      heart:    '<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1Z"/><path d="M3 12h5l2-3 3 6 2-3h6"/>',
+      drop:     '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5"/>',
+      meter:    '<path d="M4 16a8 8 0 1 1 16 0"/><path d="m12 16 4-5"/><circle cx="12" cy="16" r="1.2"/><path d="M3 20h18"/>',
+      baby:     '<rect x="3" y="8" width="18" height="10" rx="3"/><path d="M7 8V6a5 5 0 0 1 10 0v2M3 18v2M21 18v2"/><circle cx="10" cy="13" r="1.5"/>',
+    };
+
+    // Render danh sách card dịch vụ vào lưới
+    const grid = document.getElementById('services-grid');
+    grid.innerHTML = SERVICES.map((s) => `
+      <article class="reveal group relative rounded-2xl border ${s.comingSoon ? 'border-dashed border-medical/40 bg-medical-light/40' : 'border-slate-100 bg-white'} p-6 hover:-translate-y-1 hover:shadow-soft hover:border-medical/30 transition-all duration-300">
+        ${s.comingSoon ? '<span class="absolute top-4 right-4 rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-700">Sắp ra mắt</span>' : ''}
+        <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-medical-light text-medical-dark group-hover:bg-medical-dark group-hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${ICONS[s.icon]}</svg>
+        </span>
+        <h3 class="mt-5 text-lg font-bold text-slate-900 ${s.comingSoon ? 'pr-20' : ''}">${s.title}</h3>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">${s.desc}</p>
+        ${s.tag ? `<p class="mt-4 inline-block rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500">${s.tag}</p>` : ''}
+      </article>
+    `).join('');
+
+    /* ================= HIỆU ỨNG FADE-IN KHI CUỘN ================= */
+    // Dùng IntersectionObserver: khi phần tử .reveal lọt vào màn hình thì thêm .is-visible
+    const revealEls = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target); // chỉ chạy 1 lần
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      // Tạo độ trễ so le cho các phần tử trong cùng một lưới
+      revealEls.forEach((el, i) => {
+        el.style.transitionDelay = `${(i % 3) * 80}ms`;
+        observer.observe(el);
+      });
+    } else {
+      // Trình duyệt cũ: hiện luôn
+      revealEls.forEach((el) => el.classList.add('is-visible'));
+    }
+
+    /* ================= HEADER: thêm viền/bóng khi cuộn ================= */
+    const header = document.getElementById('header');
+    const onScroll = () => {
+      const scrolled = window.scrollY > 10;
+      header.classList.toggle('shadow-sm', scrolled);
+      header.classList.toggle('border-slate-100', scrolled);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ================= MENU MOBILE ================= */
+    const menuBtn = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const setMenu = (open) => {
+      mobileMenu.classList.toggle('hidden', !open);
+      document.getElementById('icon-open').classList.toggle('hidden', open);
+      document.getElementById('icon-close').classList.toggle('hidden', !open);
+      menuBtn.setAttribute('aria-expanded', String(open));
+    };
+    menuBtn.addEventListener('click', () => setMenu(mobileMenu.classList.contains('hidden')));
+    // Đóng menu khi bấm vào một link
+    document.querySelectorAll('.mobile-link').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+    /* ================= FORM ĐĂNG KÝ ================= */
+    // URL Web App của Google Apps Script (xem HUONG-DAN-GOOGLE-SHEET.md).
+    // Để trống => form chỉ log dữ liệu ra console, không gửi đi đâu.
+    const SUBMIT_URL = 'https://script.google.com/macros/s/AKfycbzZc77wwdPZjmp3rp-CSC7hU4wUqx7HsibF38c5FD4-k9vGGdxuurPV9UXcfJ-RvZlq/exec';
+
+    const form = document.getElementById('lead-form');
+    const toast = document.getElementById('toast');
+    const submitBtn = document.getElementById('submit-btn');
+    const formError = document.getElementById('form-error');
+
+    // Bật/tắt trạng thái "đang gửi" của nút submit
+    const setSubmitting = (on) => {
+      submitBtn.disabled = on;
+      submitBtn.innerHTML = on
+        ? '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity=".25"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg> Đang gửi...'
+        : 'Gửi đăng ký ngay';
+    };
+
+    // Số điện thoại Việt Nam: 10 số, bắt đầu bằng 0 (cho phép có khoảng trắng, dấu chấm, gạch)
+    const isValidPhone = (v) => /^0\d{9}$/.test(v.replace(/[\s.\-]/g, ''));
+
+    // Hiện / ẩn lỗi cho một ô nhập
+    const setError = (input, hasError) => {
+      const msg = input.parentElement.querySelector('.error-msg');
+      input.classList.toggle('border-red-400', hasError);
+      input.setAttribute('aria-invalid', String(hasError));
+      if (msg) msg.classList.toggle('hidden', !hasError);
+    };
+
+    /* ---------- Bảng khai báo trang thiết bị ----------
+       Danh mục lấy theo "Phiếu khảo sát trang thiết bị y tế và tình hình kiểm định".
+       Sửa/thêm/bớt thiết bị tại đây, giao diện tự cập nhật. */
+    const EQUIPMENT = [
+      { group: 'Thiết bị bức xạ', items: [
+        { id: 'xq-co-dinh',  name: 'X-quang cố định (thường quy, DR/CR)' },
+        { id: 'xq-di-dong',  name: 'X-quang di động' },
+        { id: 'xq-c-arm',    name: 'X-quang C-arm' },
+        { id: 'xq-nhu-anh',  name: 'X-quang chụp vú (nhũ ảnh)' },
+        { id: 'xq-nha-khoa', name: 'X-quang nha khoa' },
+        { id: 'xq-dsa',      name: 'X-quang can thiệp mạch (DSA)' },
+        { id: 'ct',          name: 'Máy chụp cắt lớp vi tính (CT)' },
+      ]},
+      { group: 'Thiết bị y tế khác', items: [
+        { id: 'dao-mo-dien', name: 'Dao mổ điện' },
+        { id: 'may-tho',     name: 'Máy thở' },
+        { id: 'gay-me-tho',  name: 'Máy gây mê kèm thở' },
+        { id: 'pha-rung',    name: 'Máy phá rung tim' },
+        { id: 'than-nhan-tao', name: 'Máy thận nhân tạo' },
+        { id: 'long-ap',     name: 'Lồng ấp trẻ sơ sinh' },
+      ]},
+    ];
+
+    // Ô nhập số lượng (chỉ nhận số nguyên >= 0)
+    const qtyInput = (name, label) => `
+      <input type="number" name="${name}" min="0" max="999" step="1" inputmode="numeric" placeholder="0" aria-label="${label}"
+             class="eq-qty w-full rounded-lg border border-slate-200 px-1 py-1.5 text-center text-sm text-slate-800 placeholder:text-slate-300 focus:border-medical focus:ring-2 focus:ring-medical/20 outline-none" />`;
+
+    // Các loại kiểm định – sửa/thêm tại đây
+    const INSPECTION_TYPES = [
+      { value: 'lan-dau',        label: 'Lần đầu' },
+      { value: 'dinh-ky',        label: 'Định kỳ' },
+      { value: 'sau-sua-chua',   label: 'Sau sửa chữa lớn' },
+    ];
+
+    // Nhóm ô tích nhu cầu kiểm định (tích được nhiều lựa chọn), hiển thị dạng nút bo tròn
+    const inspectionChecks = (name, label) => `
+      <div role="group" aria-label="${label}" class="flex flex-wrap gap-1">
+        ${INSPECTION_TYPES.map((t) => `
+          <label class="cursor-pointer">
+            <input type="checkbox" name="${name}" value="${t.value}" class="eq-inspection peer sr-only" />
+            <span class="inline-block rounded-full border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors
+                         hover:border-medical/50 peer-checked:border-medical-dark peer-checked:bg-medical-dark peer-checked:text-white
+                         peer-focus-visible:ring-2 peer-focus-visible:ring-medical/40">${t.label}</span>
+          </label>`).join('')}
+      </div>`;
+
+    // Mỗi dòng: tên thiết bị ở trên, 3 ô nhập (hiện có / dự kiến mua / ngày kiểm định) ở dưới
+    document.getElementById('equipment-list').innerHTML = EQUIPMENT.map(({ group, items }) => `
+      <p class="mt-3 mb-1 text-xs font-bold text-medical-dark">${group}</p>
+      ${items.map((it) => `
+        <div class="grid grid-cols-[4rem_4rem_1fr] sm:grid-cols-[5rem_5rem_1fr] items-center gap-x-2 gap-y-1.5 py-2 border-b border-slate-100 last:border-0">
+          <span class="col-span-3 text-sm text-slate-700 leading-snug">${it.name}</span>
+          ${qtyInput(`eq-${it.id}-current`, `${it.name} – số lượng hiện có`)}
+          ${qtyInput(`eq-${it.id}-planned`, `${it.name} – dự kiến mua sắm mới`)}
+          ${inspectionChecks(`eq-${it.id}-inspection`, `${it.name} – nhu cầu kiểm định`)}
+        </div>`).join('')}
+    `).join('');
+
+    // Đọc số lượng từ một ô, trả về số nguyên >= 0 (ô trống / sai => 0)
+    const readQty = (name) => Math.max(0, parseInt(form.elements[name].value, 10) || 0);
+
+    // Gom dữ liệu thiết bị: chỉ giữ các dòng có nhập số lượng hoặc ngày kiểm định
+    const collectEquipment = () => EQUIPMENT.flatMap((g) => g.items)
+      .map((it) => ({
+        type: it.name,
+        current: readQty(`eq-${it.id}-current`),
+        planned: readQty(`eq-${it.id}-planned`),
+        // Mảng tên các nhu cầu đã tích, VD ['Định kỳ', 'Sau sửa chữa lớn']
+        inspection: [...form.querySelectorAll(`input[name="eq-${it.id}-inspection"]:checked`)]
+          .map((c) => INSPECTION_TYPES.find((t) => t.value === c.value).label),
+      }))
+      .filter((r) => r.current > 0 || r.planned > 0 || r.inspection.length);
+
+    // Cập nhật dòng tóm tắt dưới tiêu đề khi người dùng nhập số lượng
+    const equipmentSummary = document.getElementById('equipment-summary');
+    const DEFAULT_SUMMARY = equipmentSummary.textContent;
+    const updateEquipmentSummary = () => {
+      const rows = collectEquipment();
+      const total = rows.reduce((sum, r) => sum + r.current, 0);
+      equipmentSummary.textContent = rows.length
+        ? `Đã khai báo ${rows.length} loại thiết bị · ${total} máy hiện có`
+        : DEFAULT_SUMMARY;
+    };
+    form.querySelectorAll('.eq-qty').forEach((input) => input.addEventListener('input', updateEquipmentSummary));
+    form.querySelectorAll('.eq-inspection').forEach((check) => check.addEventListener('change', updateEquipmentSummary));
+
+    // Xóa lỗi ngay khi người dùng gõ lại
+    form.querySelectorAll('input').forEach((input) => {
+      input.addEventListener('input', () => setError(input, false));
+    });
+
+    // Hiện toast trong vài giây
+    const showToast = () => {
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+      setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4'), 4000);
+    };
+
+    // Lấy chữ hiển thị của lựa chọn đang chọn trong <select> (bỏ qua lựa chọn trống)
+    const selectedLabel = (select) => (select.value ? select.options[select.selectedIndex].text : '');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Gửi chữ hiển thị (không gửi mã) để dữ liệu trong Google Sheet / email dễ đọc
+      const data = {
+        org: form.org.value.trim(),
+        facilityType: selectedLabel(form.facilityType),
+        address: form.address.value.trim(),
+        contact: form.contact.value.trim(),
+        phone: form.phone.value.trim(),
+        status: selectedLabel(form.status),
+        equipment: collectEquipment(), // [{ type, current, planned, inspection: [..] }]
+        website: form.website.value, // bẫy chống spam – người thật luôn để trống
+        submittedAt: new Date().toISOString(),
+      };
+
+      // Kiểm tra dữ liệu
+      const errors = {
+        org: !data.org,
+        contact: !data.contact,
+        phone: !isValidPhone(data.phone),
+      };
+      Object.entries(errors).forEach(([name, err]) => setError(form[name], err));
+      const firstError = Object.keys(errors).find((k) => errors[k]);
+      if (firstError) {
+        form[firstError].focus();
+        return;
+      }
+
+      setSubmitting(true);
+      formError.classList.add('hidden');
+      try {
+        if (SUBMIT_URL) {
+          // Gửi dạng text/plain để trình duyệt không chặn CORS với Google Apps Script
+          const res = await fetch(SUBMIT_URL, { method: 'POST', body: JSON.stringify(data) });
+          const result = await res.json();
+          if (!result.ok) throw new Error(result.error || 'Lỗi không xác định');
+        } else {
+          // Chưa cấu hình SUBMIT_URL: chỉ log ra console để thử nghiệm
+          console.warn('[RadShield] Chưa cấu hình SUBMIT_URL – dữ liệu chưa được gửi đi:', data);
+        }
+
+        form.reset();
+        updateEquipmentSummary();
+        document.getElementById('equipment-box').open = false;
+        showToast();
+      } catch (err) {
+        console.error('[RadShield] Gửi đăng ký thất bại:', err);
+        formError.classList.remove('hidden');
+      } finally {
+        setSubmitting(false);
+      }
+    });
+  </script>
+</body>
+</html>
